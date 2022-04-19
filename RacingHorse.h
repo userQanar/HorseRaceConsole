@@ -37,4 +37,4 @@ public:
     bool overweightJockey = false;
     bool obeseJockey      = false;
     bool winnerFirstGame  = false;
-};
+}; 

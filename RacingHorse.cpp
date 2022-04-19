@@ -134,4 +134,4 @@ winnerHorse->needsToPoop = true
  if gekackt -> 60% chance gekackt zu haben -> deactivate mussKacken -> erster Step true  <- done
  if dickerReiter -> 2% Chance den else normaler Step zu verkacken 5% bei bös adipös <-done
  if winnerFirstGame -> 9,09% boost to regularStep <- done
-*/
+*/ 
