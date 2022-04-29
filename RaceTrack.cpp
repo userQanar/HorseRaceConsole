@@ -1,7 +1,8 @@
 #include "RaceTrack.h"
 
-RacingHorse* RaceTrack::race(std::string raceName, Console& console, std::vector<RacingHorse*> horses, int length) {
-    this->initRaceTrack(raceName, horses, length);
+const RacingHorse& RaceTrack::race(const std::string& raceName,  Console& console, const immutableHorseList& horses, int length) {
+    this->prepareRace(raceName, horses, length);
+
     RacingHorse* winnerHorse = NULL;
     bool winnerFound = false;
 
@@ -14,7 +15,7 @@ RacingHorse* RaceTrack::race(std::string raceName, Console& console, std::vector
         if (winnerFound)
             break;
         for (auto horse : horses) {
-            RacingHorse* horsii = horse;
+            RacingHorse* horsii = &horse.get();
             RacingLane* lane = this->myTrack.find(horsii)->second;
 
             int oldProgress = horsii->getPosition();
@@ -25,19 +26,23 @@ RacingHorse* RaceTrack::race(std::string raceName, Console& console, std::vector
                 console.out.flush();
             }
 
-            bool hasWin = horsii->getPosition() >= lane->getLength();
-            if (hasWin) {
-                winnerFound = true;
-                winnerHorse = horsii;
+            if (!winnerFound) {
+                winnerFound = horsii->getPosition() >= lane->getLength();
+                if (winnerFound) winnerHorse = horsii;
             }
         }
     }
-    this->cleanUpAfterRace(horses);
-    console.moveTo((this->makeHeaderLines(raceName, horses, length)).size() + horses.size() + 1, 1);
-    return winnerHorse;
+
+    this->cleanUpAfterRace();
+
+    int nextNewRow = (this->makeHeaderLines(raceName, horses, length)).size() + horses.size() + 1;
+    console.moveTo(nextNewRow, 1);
+    
+    //const RacingHorse& win = winnerHorse;
+    return *winnerHorse;
 }
 
-std::vector<std::string> RaceTrack::makeHeaderLines(std::string raceName, std::vector<RacingHorse*> horses, int length) {
+const std::vector<std::string> RaceTrack::makeHeaderLines(const std::string& raceName, const immutableHorseList& horses, int length) {
 
     std::string horseCountAsStr = std::to_string(horses.size());
     std::string firstLine = "Willkommen beim Rennen von \"" + raceName + "\"";
@@ -48,7 +53,7 @@ std::vector<std::string> RaceTrack::makeHeaderLines(std::string raceName, std::v
     };
 }
 
-void RaceTrack::printHeader(std::string raceName, Console& console, std::vector<RacingHorse*> horses, int length) {
+void RaceTrack::printHeader(const std::string& raceName, Console& console, const immutableHorseList& horses, int length) {
     auto headerlines = this->makeHeaderLines(raceName, horses, length);
 
     unsigned int counter = 1;
@@ -58,34 +63,38 @@ void RaceTrack::printHeader(std::string raceName, Console& console, std::vector<
     }
 }
 
-int RaceTrack::race(std::string raceName, Console& console, RacingHorse horseOne, RacingHorse horseTwo, int length) {
-    std::vector<RacingHorse*> myVector{ &horseOne, &horseTwo };
-    RacingHorse* winner = this->race(raceName, console, myVector, length);
-    if (winner == myVector[0]) return 0;
+int RaceTrack::race(const std::string& raceName, Console& console, RacingHorse& horseOne, RacingHorse& horseTwo, int length) {
+    //const immutableHorseList myVector = { horseOne, horseTwo };
+    std::vector<std::reference_wrapper<RacingHorse>> myVector{ horseOne, horseTwo };
+
+    const std::vector<std::reference_wrapper<RacingHorse>>& myVectors = myVector;
+    const RacingHorse& winner = this->race(raceName, console, myVectors, length);
+
+    auto firstHorse = myVector[0].get();
+
+    if (winner.getName() == firstHorse.getName()) return 0;
     return 1;
 }
 
-void RaceTrack::initRaceTrack(std::string raceName, std::vector<RacingHorse*> horses, int length) {
+void RaceTrack::prepareRace(const std::string& raceName, const immutableHorseList& horses, int length) {
 
     auto headerLines = this->makeHeaderLines(raceName, horses, length);
-
     int counter = 1 + headerLines.size();
-    for (RacingHorse* horse : horses) {
+    for (auto horse : horses) {
+        RacingHorse* horsii = &horse.get();
         RacingLane* horsesLane = new RacingLane(counter, 30, length);
-        this->myTrack.insert(std::pair<RacingHorse*, RacingLane*>(horse, horsesLane));
+        this->myTrack.insert(std::pair<RacingHorse*, RacingLane*>(horsii, horsesLane));
+
+        horsii->prepare(horses,raceName,length);
         counter++;
     }
 }
 
-void RaceTrack::cleanUpAfterRace(std::vector<RacingHorse*> horses) {
-    for (RacingHorse* horse : horses) {
-        horse->reset();
-        // Delete existing Lanes, if any
-        auto maybehorseLanePair = this->myTrack.find(horse);
-        if (maybehorseLanePair != this->myTrack.end()) {
-            auto horseLanePair = *maybehorseLanePair;
-            delete horseLanePair.second;
-        }
+void RaceTrack::cleanUpAfterRace() {
+
+    for (std::pair<RacingHorse*, RacingLane*> pair: this->myTrack) {
+        pair.first->reset();
+        delete pair.second;
     }
     this->myTrack.clear();
 }

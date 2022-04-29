@@ -34,6 +34,7 @@ void set_invisible_input_mode();
 
 #ifdef _WIN32
 // Some old MinGW/CYGWIN distributions don't define this:
+
 #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
 #endif
@@ -110,6 +111,9 @@ Console::~Console() {
 	--instances;
 }
 #else
+
+const auto sscanf_s = sscanf;
+
 
 static termios orig_term;
 
