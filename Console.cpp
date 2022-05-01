@@ -19,7 +19,7 @@ enum ConsoleClear {
 };
 
 static int instances = 0;
-static bool visible_input = true;
+//static bool visible_input = true;
 
 void instance_check() {
 	if (instances != 0) {

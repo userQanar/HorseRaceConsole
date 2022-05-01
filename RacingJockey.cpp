@@ -20,7 +20,7 @@ unsigned int RacingJockey::getWeight() const{
 }
 
 // NOT USED 
-const unsigned int RacingJockey::getSpeedFactor() const {
+unsigned int RacingJockey::getSpeedFactor() const {
     if (this->weight < 65) 
         return 100;
     if (this->weight < 80) 

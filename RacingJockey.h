@@ -19,7 +19,7 @@ class RacingJockey {
         const std::string getName() const;
         unsigned int getWeight() const;
 
-        const unsigned int getSpeedFactor() const;
+        unsigned int getSpeedFactor() const;
 
         JockeyWeight getWeightCategory() const;
     

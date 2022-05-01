@@ -9,16 +9,16 @@ class RacingLane {
 private:
     int laneNumber;
     int startPos;
-    int length;
+    unsigned int length;
 
 public:
     RacingLane(
         int laneNumber,
         int startPos,
-        int length
+        unsigned int length
     );
     ~RacingLane();
 
-    int getLength();
-    const void print(Console& console, RacingHorse& horse);
+    unsigned int getLength();
+    void print(Console& console, RacingHorse& horse);
 };

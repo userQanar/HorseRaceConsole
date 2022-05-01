@@ -1,6 +1,6 @@
 #include "RaceTrack.h"
 
-const RacingHorse& RaceTrack::race(const std::string& raceName,  Console& console, const immutableHorseList& horses, int length) {
+const RacingHorse& RaceTrack::race(const std::string& raceName,  Console& console, const immutableHorseList& horses, unsigned int length) {
     this->prepareRace(raceName, horses, length);
 
     RacingHorse* winnerHorse = NULL;
@@ -18,10 +18,10 @@ const RacingHorse& RaceTrack::race(const std::string& raceName,  Console& consol
             RacingHorse* horsii = &horse.get();
             RacingLane* lane = this->myTrack.find(horsii)->second;
 
-            int oldProgress = horsii->getPosition();
+            unsigned int oldProgress = horsii->getPosition();
             horsii->tick();
 
-            if (horsii->getPosition() > oldProgress || i == 0) {
+            if (horsii->getPosition() != oldProgress || i == 0) {
                 lane->print(console, *horsii);
                 console.out.flush();
             }
@@ -42,7 +42,7 @@ const RacingHorse& RaceTrack::race(const std::string& raceName,  Console& consol
     return *winnerHorse;
 }
 
-const std::vector<std::string> RaceTrack::makeHeaderLines(const std::string& raceName, const immutableHorseList& horses, int length) {
+const std::vector<std::string> RaceTrack::makeHeaderLines(const std::string& raceName, const immutableHorseList& horses, unsigned int length) {
 
     std::string horseCountAsStr = std::to_string(horses.size());
     std::string firstLine = "Willkommen beim Rennen von \"" + raceName + "\"";
@@ -53,7 +53,7 @@ const std::vector<std::string> RaceTrack::makeHeaderLines(const std::string& rac
     };
 }
 
-void RaceTrack::printHeader(const std::string& raceName, Console& console, const immutableHorseList& horses, int length) {
+void RaceTrack::printHeader(const std::string& raceName, Console& console, const immutableHorseList& horses, unsigned int length) {
     auto headerlines = this->makeHeaderLines(raceName, horses, length);
 
     unsigned int counter = 1;
@@ -63,7 +63,7 @@ void RaceTrack::printHeader(const std::string& raceName, Console& console, const
     }
 }
 
-int RaceTrack::race(const std::string& raceName, Console& console, RacingHorse& horseOne, RacingHorse& horseTwo, int length) {
+int RaceTrack::race(const std::string& raceName, Console& console, RacingHorse& horseOne, RacingHorse& horseTwo, unsigned int length) {
     //const immutableHorseList myVector = { horseOne, horseTwo };
     std::vector<std::reference_wrapper<RacingHorse>> myVector{ horseOne, horseTwo };
 
@@ -76,7 +76,7 @@ int RaceTrack::race(const std::string& raceName, Console& console, RacingHorse& 
     return 1;
 }
 
-void RaceTrack::prepareRace(const std::string& raceName, const immutableHorseList& horses, int length) {
+void RaceTrack::prepareRace(const std::string& raceName, const immutableHorseList& horses, unsigned int length) {
 
     auto headerLines = this->makeHeaderLines(raceName, horses, length);
     int counter = 1 + headerLines.size();

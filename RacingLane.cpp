@@ -3,7 +3,7 @@
 RacingLane::RacingLane(
     int laneNumber,
     int startPos,
-    int length
+    unsigned int length
 ) : laneNumber(laneNumber),
 startPos(startPos),
 length(length) {
@@ -11,11 +11,11 @@ length(length) {
 
 RacingLane::~RacingLane() {}
 
-int RacingLane::getLength() {
+unsigned int RacingLane::getLength() {
     return this->length;
 }
 
-const void RacingLane::print(Console& console, RacingHorse& horse) {
+void RacingLane::print(Console& console, RacingHorse& horse) {
     console.moveTo(this->laneNumber, 0);
     console.clearLine();
     console.out << horse.getName();

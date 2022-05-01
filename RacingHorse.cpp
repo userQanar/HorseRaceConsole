@@ -2,14 +2,14 @@
 
 RacingHorse::RacingHorse(const std::string& name) :
     name(name),
-    position(1),
-    jockey(std::nullopt)
+    jockey(std::nullopt),
+    position(1)
 {}
 
 RacingHorse::RacingHorse(const std::string& name, const RacingJockey& jockey):
     name(name),
-    position(1),
-    jockey(jockey)
+    jockey(jockey),
+    position(1)
 {}
 
 RacingHorse::~RacingHorse() {
@@ -30,7 +30,7 @@ unsigned int RacingHorse::getStepSize() {
     return RacingHorse::stepSize;
 }
 
-const bool  RacingHorse::trueInXPercent(unsigned int percentage) {
+bool  RacingHorse::trueInXPercent(unsigned int percentage) {
     auto dice100 = (unsigned int)std::rand() % 100;
 	return dice100 <= percentage;
 }
@@ -109,6 +109,13 @@ void RacingHorse::reset() {
 void RacingHorse::prepare(const std::vector<std::reference_wrapper<RacingHorse>>& horses, 
 const std::string& racename, 
 unsigned int length){
+
+    // Satisfy the compiling b**ch. Pretend to use the parameters
+    // to prevent "unused parameter" errors :o)
+    (void) horses;
+    (void) racename;
+    (void) length;
+
     int dice100 = (unsigned int)std::rand() % 100;
 
     if (dice100 % 10 >= 0 && dice100 % 10 <= 2) 

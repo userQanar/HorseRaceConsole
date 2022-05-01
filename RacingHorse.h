@@ -12,15 +12,14 @@ class RacingHorse {
 private:
 
     std::string name;
-
-
     std::optional<RacingJockey> jockey;
+
     unsigned int position;
     unsigned int stepSize{ 1000000 };
 
 
     int calcStepMod(int dice100, unsigned int diceUnlim);
-    const bool trueInXPercent(unsigned int percentage);
+    bool trueInXPercent(unsigned int percentage);
 
     bool step();
 
@@ -53,5 +52,5 @@ public:
     bool didPoo           = false;
     bool overweightJockey = false;
     bool obeseJockey      = false;
-    int operator ==(RacingHorse that) const;
+    int  operator ==(RacingHorse that) const;
 }; 
