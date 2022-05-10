@@ -38,7 +38,7 @@ public:
     void reset();
 
     void prepare(const std::vector<std::reference_wrapper<RacingHorse>>& horses, const std::string& racename, unsigned int length);
-
+    int  operator ==(RacingHorse that) const;
 
     //Buffs and Debuffs
     //Counters
@@ -55,6 +55,4 @@ public:
     bool didPoo = false;
     bool overweightJockey = false;
     bool obeseJockey = false;
-
-    int  operator ==(RacingHorse that) const;
 };
