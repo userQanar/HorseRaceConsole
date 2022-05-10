@@ -1,15 +1,24 @@
 #include "RacingHorse.h"
 
-RacingHorse::RacingHorse(std::string name) :
+RacingHorse::RacingHorse(const std::string& name) :
     name(name),
+    jockey(std::nullopt),
+    position(1)
+{}
+
+RacingHorse::RacingHorse(const std::string& name, const RacingJockey& jockey) :
+    name(name),
+    jockey(jockey),
     position(1)
 {}
 
 RacingHorse::~RacingHorse() {
     this->name.clear();
+    if (this->jockey.has_value())
+        this->jockey.reset();
 }
 
-std::string RacingHorse::getName() {
+std::string RacingHorse::getName() const {
     return this->name;
 }
 
@@ -17,77 +26,83 @@ unsigned int RacingHorse::getPosition() {
     return this->position;
 }
 
-const int RacingHorse::getStepSize() {
+unsigned int RacingHorse::getStepSize() {
     return RacingHorse::stepSize;
 }
 
-bool RacingHorse::step() {
-    unsigned int n = RacingHorse::getStepSize();
+bool  RacingHorse::trueInXPercent(unsigned int percentage) {
+    auto dice100 = (unsigned int)std::rand() % 100;
+    return dice100 <= percentage;
+}
 
-    int speedBuff = (unsigned int)std::rand() % 100;
+int RacingHorse::calcStepMod(int dice100, unsigned int diceUnlim) {
+    unsigned int n = this->getStepSize();
+    //unsigned int n = (double) this->getStepSize();
 
-    if (preperation) {
-
-        if (!overweightJockey) {
-            if (speedBuff % 10 >= 0 && speedBuff % 10 <= 2) {
-                this->overweightJockey = true;
-            }
-        }
-        if (!obeseJockey) {
-            if (speedBuff % 10 == 3 || speedBuff % 10 == 4) {
-                this->obeseJockey = true;
-            }
-        }
-        if (speedBuff > 40) {
-            this->preperation = false;
-            this->didPoo = true;
-            return true;//Free Step Boost when pood in preMatch
-        }
-        else {
-            this->preperation = false;//remove opening of the IF-Trees millions of times
-        }
+    // If the Horse has no jockey, it might either be faster, equally fast, or slower
+    // Depending if horse is insane or epic
+    // Values ranging between 49, 50, 51 -> Either -0.2%, no change, or +0.2%
+    if (!this->jockey.has_value()) {
+        float factor = ((float)(dice100 % 3) + 49.0f) / 50.0f;
+        n *= factor;
     }
-    //Movement Abilitys
-    if (speedBuff < 27) { 
-        int mod = (unsigned int)std::rand() % (n * 7 / 8);//25 % Speedboost
-        if (mod < 1) { this->trotting++; }
-        return mod < 1 ? true : false;
-    }
-    else if (speedBuff > 27 && speedBuff < 40) { 
-        int mod = (unsigned int)std::rand() % (n * 6 / 8);//50 % Speedboost
-        if (mod < 1) { this->running++; }
-        return mod < 1 ? true : false;
-    }
-    else if (speedBuff >= 40 && speedBuff < 47) { 
-        int mod = (unsigned int)std::rand() % (n * 4 / 8);//100 % Speedboost
-        if (mod < 1) { this->galloping++; }
-        return mod < 1 ? true : false;
-    }
-    //Weight Modifiers
     else {
-
-        if (overweightJockey) {
-            int mod = (unsigned int)std::rand() % (n * 51 / 50);
-            return mod < 1 ? true : false;// +3 Damage to this->Spine
-        }
-        else if (obeseJockey) {
-            int mod = (unsigned int)std::rand() % (n * 21 / 20);
-            return mod < 1 ? true : false;// +11 Damage to this->Spine
-        }
-        else if (winnerFirstGame) {
-            int mod = (unsigned int)std::rand() % (n * 10 / 11);
-            return mod < 1 ? true : false;// +9,09% increased Movementspeed of regularStep
-        }// Winner Horse gets "Handicapped" for increased muscle contraction-> increased Speed.
-        else {
-            int mod = (unsigned int)std::rand() % n;
-            return mod < 1 ? true : false;//regularStep
-        }
+        JockeyWeight weight = this->jockey->getWeightCategory();
+        if (weight == THIN)
+            n *= 3.0f / 4.0f;
+        if (weight == THICC)
+            n *= 4.0f / 3.0f;
+        if (weight == OBESE)
+            n *= 5.0f / 3.0f;
     }
+
+    //Movement Abilitys
+    if (this->trueInXPercent(7)) {
+        this->gallopingBool = true;
+        n *= (float)1 / 2; // -50%
+    }
+    else if (this->trueInXPercent(13)) {
+        this->runningBool = true;
+        n *= (float)3 / 4; // -25%
+    }
+    else if (this->trueInXPercent(26)) {
+        this->trottingBool = true;
+        n *= (float)7 / 8; // -12.5%
+    }
+
+    if (overweightJockey)
+        n *= (float)51 / 50; // +2% penalty
+    else if (obeseJockey)
+        n *= (float)21 / 20; // +5% penality
+
+    if (n < 1) {
+        n = this->getStepSize();
+    }
+
+    if (this->trottingBool || this->runningBool || this->gallopingBool) {
+        if (this->gallopingBool && diceUnlim % n < 1)this->galloping++;
+        this->gallopingBool = false;
+        if (this->runningBool && diceUnlim % n < 1)this->running++;
+        this->runningBool = false;
+        if (this->trottingBool && diceUnlim % n < 1)this->trotting++;
+        this->trottingBool = false;
+    }
+
+    return diceUnlim % n;
+}
+
+bool RacingHorse::step() {
+    int dice100 = (unsigned int)std::rand() % 100;
+    unsigned int diceUnlim = (unsigned int)std::rand();
+
+    int mod = this->calcStepMod(dice100, diceUnlim);
+
+    return mod < 1 ? true : false;
 }
 
 void RacingHorse::tick() {
-    bool stepResult = this->step();
-    this->position += stepResult;
+    //bool stepResult = this->step();
+    this->position += this->step();
 }
 
 void RacingHorse::print(const Console& console) {
@@ -99,12 +114,43 @@ void RacingHorse::reset() {
     this->position = 1;
 }
 
+void RacingHorse::prepare(const std::vector<std::reference_wrapper<RacingHorse>>& horses,
+    const std::string& racename,
+    unsigned int length) {
+
+    // Satisfy the compiling b**ch. Pretend to use the parameters
+    // to prevent "unused parameter" errors :o)
+    (void)horses;
+    (void)racename;
+    (void)length;
+
+    int dice100 = (unsigned int)std::rand() % 100;
+
+    if (dice100 % 10 >= 0 && dice100 % 10 <= 2)
+        this->overweightJockey = true;
+
+    else if (dice100 % 10 == 3 || dice100 % 10 == 4)
+        this->obeseJockey = true;
+
+    if (dice100 > 40) {
+        this->didPoo = true;//Free Step Boost when pood in preMatch
+        this->position++; // poo horse one free, pog
+    }
+}
+
+int RacingHorse::operator ==(RacingHorse that) const {
+    if (this->getName() == that.getName())
+        return 1;
+    return 0;
+}
+
 /*//Savegame normal Step\\
 bool RacingHorse::step() {
    unsigned int n = RacingHorse::getStepSize();
    int mod = (unsigned int)std::rand() % n;
    return mod < 1 ? true : false;
 }*/
+
 
 /* @Brief 
 Zwei Drittel der Männer (67 %) und die Hälfte der Frauen (53 %) in Deutschland sind übergewichtig.      // gerundet ~50% für Horse->weightModifier Frauen wiegen weniger in kg

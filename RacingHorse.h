@@ -2,39 +2,59 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+#include <optional>
+
 #include "Console.h"
+#include "RacingJockey.h"
 
 class RacingHorse {
 private:
+
     std::string name;
+    std::optional<RacingJockey> jockey;
+
     unsigned int position;
-    static const unsigned int stepSize{ 1000000 };
+    unsigned int stepSize{ 10000 };
+
+
+    int calcStepMod(int dice100, unsigned int diceUnlim);
+    bool trueInXPercent(unsigned int percentage);
 
     bool step();
+
 public:
-    RacingHorse(std::string name);
+    RacingHorse(const std::string& name);
+    RacingHorse(const std::string& name, const RacingJockey& jockey);
     ~RacingHorse();
 
-    std::string          getName();
-    unsigned int     getPosition();
-    static const int getStepSize();
+    std::string  getName() const;
+    unsigned int getPosition();
+    unsigned int getStepSize();
+    //std::optional<RacingJockey> getJockey();
 
     void tick();
     void print(const Console& console);
     void reset();
 
+    void prepare(const std::vector<std::reference_wrapper<RacingHorse>>& horses, const std::string& racename, unsigned int length);
+
+
     //Buffs and Debuffs
     //Counters
+    bool trottingBool = false;
+    bool runningBool = false;
+    bool gallopingBool = false;
     int trotting = 0;
-    int running  = 0;
-    int galloping= 0;
+    int running = 0;
+    int galloping = 0;
     //int airborne=0;//to be decided
     //int spine  = 0;//to be decided
-    
+
     //Passives
-    bool preperation      = true;
-    bool didPoo           = false;
+    bool didPoo = false;
     bool overweightJockey = false;
-    bool obeseJockey      = false;
-    bool winnerFirstGame  = false;
-}; 
+    bool obeseJockey = false;
+
+    int  operator ==(RacingHorse that) const;
+};
