@@ -8,9 +8,9 @@
 #include "Console.h"
 #include "RacingJockey.h"
 
-class RacingHorse {
-private:
-
+class Racer {
+protected:
+    //friend class RacingHorse; // keine Ahnung 
     std::string name;
     std::optional<RacingJockey> jockey;
 
@@ -21,12 +21,12 @@ private:
     int calcStepMod(int dice100, unsigned int diceUnlim);
     bool trueInXPercent(unsigned int percentage);
 
-    bool step();
+    virtual int step();
 
 public:
-    RacingHorse(const std::string& name);
-    RacingHorse(const std::string& name, const RacingJockey& jockey);
-    ~RacingHorse();
+    Racer(const std::string& name);
+    Racer(const std::string& name, const RacingJockey& jockey);
+    ~Racer();
 
     std::string  getName() const;
     unsigned int getPosition();
@@ -34,11 +34,11 @@ public:
     //std::optional<RacingJockey> getJockey();
 
     void tick();
-    void print(const Console& console);
+    virtual void print(const Console& console);
     void reset();
 
-    void prepare(const std::vector<std::reference_wrapper<RacingHorse>>& horses, const std::string& racename, unsigned int length);
-    int  operator ==(RacingHorse that) const;
+    void prepare(const std::vector<std::reference_wrapper<Racer>>& horses, const std::string& racename, unsigned int length);
+    int  operator ==(Racer that) const;
 
     //Buffs and Debuffs
     //Counters
@@ -55,4 +55,27 @@ public:
     bool didPoo = false;
     bool overweightJockey = false;
     bool obeseJockey = false;
+};
+
+
+class RacingHorse : public Racer {
+public:
+
+    using Racer::Racer;
+};
+
+class FrillLizard : public Racer {
+public:
+
+    int step();// minus coordinates crash loop
+    void print(const Console& console);
+    using Racer::Racer;
+};
+
+class RagingBull : public Racer {
+public:
+
+    int step();// minus coordinates crash loop
+    void print(const Console& console);
+    using Racer::Racer;
 };

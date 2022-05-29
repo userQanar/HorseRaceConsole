@@ -6,14 +6,14 @@
 #include <map>
 #include <functional>
 #include "Console.h"
-#include "RacingHorse.h"
+#include "Racer.h"
 #include "RacingLane.h"
 
-using immutableHorseList = std::vector<std::reference_wrapper<RacingHorse>>;
+using immutableHorseList = std::vector<std::reference_wrapper<Racer>>;
 
 class RaceTrack {
 private:
-    std::map<RacingHorse*, RacingLane*> myTrack;
+    std::map<Racer*, RacingLane*> myTrack;
     void prepareRace(const std::string& raceName, const immutableHorseList& horses, unsigned int length);
     void printHeader(const std::string& raceName, Console& console, const immutableHorseList& horses, unsigned int length);
     const std::vector<std::string> makeHeaderLines(const std::string& raceName, const immutableHorseList& horses, unsigned int length);
@@ -21,6 +21,6 @@ private:
     void cleanUpAfterRace();
 
 public:
-    const RacingHorse& race(const std::string& raceName, Console& console, const immutableHorseList& horses, unsigned int length);
-    int race(const std::string& raceName, Console& console, RacingHorse& horseOne, RacingHorse& horseTwo, unsigned int length);
+    const Racer& race(const std::string& raceName, Console& console, const immutableHorseList& horses, unsigned int length);
+    int race(const std::string& raceName, Console& console, Racer& horseOne, Racer& horseTwo, unsigned int length);
 };

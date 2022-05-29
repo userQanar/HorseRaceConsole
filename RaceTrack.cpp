@@ -1,9 +1,9 @@
 #include "RaceTrack.h"
 
-const RacingHorse& RaceTrack::race(const std::string& raceName, Console& console, const immutableHorseList& horses, unsigned int length) {
+const Racer& RaceTrack::race(const std::string& raceName, Console& console, const immutableHorseList& horses, unsigned int length) {
     this->prepareRace(raceName, horses, length);
 
-    RacingHorse* winnerHorse = NULL;
+    Racer* winnerHorse = NULL;
     bool winnerFound = false;
 
     console.clearScreen();
@@ -15,19 +15,19 @@ const RacingHorse& RaceTrack::race(const std::string& raceName, Console& console
         if (winnerFound)
             break;
         for (auto horse : horses) {
-            RacingHorse* horsii = &horse.get();
+            Racer* horsii = &horse.get();
             RacingLane* lane = this->myTrack.find(horsii)->second;
 
             unsigned int oldProgress = horsii->getPosition();
             horsii->tick();
 
-            if (horsii->getPosition() != oldProgress || i == 0) {
+            if (horsii->getPosition() != oldProgress || i == 0) { 
                 lane->print(console, *horsii);
                 console.out.flush();
             }
 
             if (!winnerFound) {
-                winnerFound = horsii->getPosition() >= lane->getLength();
+                winnerFound = horsii->getPosition() >= lane->getLength(); //>= 
                 if (winnerFound) winnerHorse = horsii;
             }
         }
@@ -38,7 +38,7 @@ const RacingHorse& RaceTrack::race(const std::string& raceName, Console& console
     int nextNewRow = (this->makeHeaderLines(raceName, horses, length)).size() + horses.size() + 1;
     console.moveTo(nextNewRow, 1);
 
-    //const RacingHorse& win = winnerHorse;
+    //const Racer& win = winnerHorse;
     return *winnerHorse;
 }
 
@@ -63,12 +63,12 @@ void RaceTrack::printHeader(const std::string& raceName, Console& console, const
     }
 }
 
-int RaceTrack::race(const std::string& raceName, Console& console, RacingHorse& horseOne, RacingHorse& horseTwo, unsigned int length) {
+int RaceTrack::race(const std::string& raceName, Console& console, Racer& horseOne, Racer& horseTwo, unsigned int length) {
     //const immutableHorseList myVector = { horseOne, horseTwo };
-    std::vector<std::reference_wrapper<RacingHorse>> myVector{ horseOne, horseTwo };
+    std::vector<std::reference_wrapper<Racer>> myVector{ horseOne, horseTwo };
 
-    const std::vector<std::reference_wrapper<RacingHorse>>& myVectors = myVector;
-    const RacingHorse& winner = this->race(raceName, console, myVectors, length);
+    const std::vector<std::reference_wrapper<Racer>>& myVectors = myVector;
+    const Racer& winner = this->race(raceName, console, myVectors, length);
 
     auto firstHorse = myVector[0].get();
 
@@ -81,9 +81,9 @@ void RaceTrack::prepareRace(const std::string& raceName, const immutableHorseLis
     auto headerLines = this->makeHeaderLines(raceName, horses, length);
     int counter = 1 + headerLines.size();
     for (auto horse : horses) {
-        RacingHorse* horsii = &horse.get();
+        Racer* horsii = &horse.get();
         RacingLane* horsesLane = new RacingLane(counter, 30, length);
-        this->myTrack.insert(std::pair<RacingHorse*, RacingLane*>(horsii, horsesLane));
+        this->myTrack.insert(std::pair<Racer*, RacingLane*>(horsii, horsesLane));
 
         horsii->prepare(horses, raceName, length);
         counter++;
@@ -92,7 +92,7 @@ void RaceTrack::prepareRace(const std::string& raceName, const immutableHorseLis
 
 void RaceTrack::cleanUpAfterRace() {
 
-    for (std::pair<RacingHorse*, RacingLane*> pair : this->myTrack) {
+    for (std::pair<Racer*, RacingLane*> pair : this->myTrack) {
         pair.first->reset();
         delete pair.second;
     }

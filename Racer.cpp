@@ -1,41 +1,42 @@
-#include "RacingHorse.h"
+#include "Racer.h"
+#include "Console.h"
 
-RacingHorse::RacingHorse(const std::string& name) :
+Racer::Racer(const std::string& name) :
     name(name),
     jockey(std::nullopt),
-    position(1)
+    position(5) // minus coordinates crash loop
 {}
 
-RacingHorse::RacingHorse(const std::string& name, const RacingJockey& jockey) :
+Racer::Racer(const std::string& name, const RacingJockey& jockey) :
     name(name),
     jockey(jockey),
-    position(1)
+    position(5) // minus coordinates crash loop
 {}
 
-RacingHorse::~RacingHorse() {
+Racer::~Racer() {
     this->name.clear();
     if (this->jockey.has_value())
         this->jockey.reset();
 }
 
-std::string RacingHorse::getName() const {
+std::string Racer::getName() const {
     return this->name;
 }
 
-unsigned int RacingHorse::getPosition() {
+unsigned int Racer::getPosition() {
     return this->position;
 }
 
-unsigned int RacingHorse::getStepSize() {
-    return RacingHorse::stepSize;
+unsigned int Racer::getStepSize() {
+    return Racer::stepSize;
 }
 
-bool  RacingHorse::trueInXPercent(unsigned int percentage) {
+bool  Racer::trueInXPercent(unsigned int percentage) {
     auto dice100 = (unsigned int)std::rand() % 100;
-    return dice100 <= percentage;
+    return dice100+1 <= percentage;
 }
 
-int RacingHorse::calcStepMod(int dice100, unsigned int diceUnlim) {
+int Racer::calcStepMod(int dice100, unsigned int diceUnlim) {
     unsigned int n = this->getStepSize();
     //unsigned int n = (double) this->getStepSize();
 
@@ -91,30 +92,66 @@ int RacingHorse::calcStepMod(int dice100, unsigned int diceUnlim) {
     return diceUnlim % n;
 }
 
-bool RacingHorse::step() {
+int Racer::step() {
     int dice100 = (unsigned int)std::rand() % 100;
     unsigned int diceUnlim = (unsigned int)std::rand();
 
     int mod = this->calcStepMod(dice100, diceUnlim);
 
-    return mod < 1 ? true : false;
+    return mod < 1 ? 1 : 0;
+}
+//Die Methode step soll zufällige Werte aus der Menge{ -1, 0, 1, 2 } zurückgeben können.
+int FrillLizard::step() {
+
+    if (this->getPosition() < 1) return 1;
+    int dice100 = (unsigned int)std::rand() % 100;
+    unsigned int diceUnlim = (unsigned int)std::rand();
+
+    int mod = this->calcStepMod(dice100, diceUnlim);
+
+    int dice4 = (((unsigned int)std::rand() % 4) - 1);
+
+    return mod < 1 ? dice4 : 0;
 }
 
-void RacingHorse::tick() {
+int RagingBull::step() {
+
+    if (this->getPosition() < 5) return 5;
+    int dice100 = (unsigned int)std::rand() % 100;
+    unsigned int diceUnlim = (unsigned int)std::rand();
+
+    int mod = this->calcStepMod(dice100, diceUnlim);
+
+
+    int dice9 = (((unsigned int)std::rand() % 10) - 4);
+    return mod < 1 ? dice9 : 0;
+}
+
+void Racer::tick() {
     //bool stepResult = this->step();
     this->position += this->step();
 }
 
-void RacingHorse::print(const Console& console) {
+void Racer::print(const Console& console) {
     std::string asterics(this->position, '*');
     console.out << asterics;//Walking Animation
 }
 
-void RacingHorse::reset() {
-    this->position = 1;
+void FrillLizard::print(const Console& console) {
+    std::string asterics(this->position, 'x');
+    console.out << asterics;//Walking Animation
 }
 
-void RacingHorse::prepare(const std::vector<std::reference_wrapper<RacingHorse>>& horses,
+void RagingBull::print(const Console& console) {
+    std::string asterics(this->position, '>');
+    console.out << asterics;//Walking Animation
+}
+
+void Racer::reset() {
+    this->position = 5; // minus coordinates crash loop
+}
+
+void Racer::prepare(const std::vector<std::reference_wrapper<Racer>>& horses,
     const std::string& racename,
     unsigned int length) {
 
@@ -138,15 +175,15 @@ void RacingHorse::prepare(const std::vector<std::reference_wrapper<RacingHorse>>
     }
 }
 
-int RacingHorse::operator ==(RacingHorse that) const {
+int Racer::operator ==(Racer that) const {
     if (this->getName() == that.getName())
         return 1;
     return 0;
 }
 
 /*//Savegame normal Step\\
-bool RacingHorse::step() {
-   unsigned int n = RacingHorse::getStepSize();
+bool Racer::step() {
+   unsigned int n = Racer::getStepSize();
    int mod = (unsigned int)std::rand() % n;
    return mod < 1 ? true : false;
 }*/
