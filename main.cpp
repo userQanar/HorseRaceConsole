@@ -11,6 +11,10 @@
 #include "RacingLane.h"
 #include "RaceTrack.h"
 
+#include "Bet.h"
+#include "Player.h"
+
+
 using namespace std::chrono_literals;//fürn sleep_for i guess
 
 int main()
@@ -39,7 +43,7 @@ int main()
 
     RaceTrack raceTrack = RaceTrack();
 
-    /*
+    
     //Race 1
     const std::vector<std::reference_wrapper<Racer>> racingHorses = std::vector<std::reference_wrapper<Racer>>{
         std::ref(racer_A),
@@ -58,7 +62,7 @@ int main()
         myConsole.out << "Hallo, ich bin Marcel Davis, Leiter fuer Kundenzufridenheit bei 1&1.| " << "COCA COLA " << "YUMMY " << std::endl;
         std::this_thread::sleep_for(0.25s);
     }
-    */
+    
 
     //Race 2
     const std::vector<std::reference_wrapper<Racer>> racingHorses2{
