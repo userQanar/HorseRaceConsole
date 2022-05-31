@@ -4,13 +4,13 @@
 Racer::Racer(const std::string& name) :
     name(name),
     jockey(std::nullopt),
-    position(5) // minus coordinates crash loop
+    position(1) // minus coordinates crash loop
 {}
 
 Racer::Racer(const std::string& name, const RacingJockey& jockey) :
     name(name),
     jockey(jockey),
-    position(5) // minus coordinates crash loop
+    position(1) // minus coordinates crash loop
 {}
 
 Racer::~Racer() {
@@ -148,7 +148,7 @@ void RagingBull::print(const Console& console) {
 }
 
 void Racer::reset() {
-    this->position = 5; // minus coordinates crash loop
+    this->position = 1; // minus coordinates crash loop
 }
 
 void Racer::prepare(const std::vector<std::reference_wrapper<Racer>>& horses,
