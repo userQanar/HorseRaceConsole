@@ -140,19 +140,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bet.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RaceTrack.cpp" />
     <ClCompile Include="Racer.cpp" />
     <ClCompile Include="RacingJockey.cpp" />
     <ClCompile Include="RacingLane.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bet.h" />
     <ClInclude Include="Console.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="RaceTrack.h" />
     <ClInclude Include="Racer.h" />
     <ClInclude Include="RacingJockey.h" />
