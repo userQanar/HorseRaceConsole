@@ -11,10 +11,6 @@
 #include "RacingLane.h"
 #include "RaceTrack.h"
 
-#include "Bet.h"
-#include "Player.h"
-
-
 using namespace std::chrono_literals;//fürn sleep_for i guess
 
 int main()
@@ -103,7 +99,7 @@ int main()
 
     if (secondWinner.obeseJockey)
         myConsole.out << "Das Pferd " << secondWinner.getName() << " konnte sich heute trotz \" boes adipoesem Reiter \" als Gewinner durchsetzen." << std::endl << "+11 Damage to this->Wirbelsaeule" << std::endl;
-    /*
+    /* broken if first race deactivated
     if (secondWinner == firstWinner)
         myConsole.out << "Das Pferd " << secondWinner.getName() << " zeigte sich heute mit seinem \" zweiten Sieg \" als wahrer Gewinner des Tages." << std::endl << std::endl;
     */
